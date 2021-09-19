@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import "./App.css";
 import { fetchImages } from "API-service/API-service";
 import Searchbar from "components/Searchbar/Searchbar";
+import ImageGallery from "components/ImageGallery/ImageGallery";
 
 class App extends React.Component {
   state = {
@@ -43,6 +44,8 @@ class App extends React.Component {
             "We are sorry, but you have reached the end of search results."
           );
         }
+        this.setState({ images: [...this.state.images, ...hits] });
+        console.log(result);
       } catch (error) {
         this.setState({ searchStatus: "rejected" });
         console.log(error);
@@ -52,9 +55,11 @@ class App extends React.Component {
   }
 
   render() {
+    const { images } = this.state;
     return (
       <div className="photo-card">
         <Searchbar onFormSubmit={this.handleFormSubmit} />
+        <ImageGallery images={images} />
         <ToastContainer autoClose={3000} />
       </div>
     );
