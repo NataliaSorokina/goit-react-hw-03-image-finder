@@ -5,6 +5,7 @@ import "./App.css";
 import { fetchImages } from "API-service/API-service";
 import Searchbar from "components/Searchbar/Searchbar";
 import ImageGallery from "components/ImageGallery/ImageGallery";
+import Button from "components/Button/Button";
 
 class App extends React.Component {
   state = {
@@ -12,6 +13,7 @@ class App extends React.Component {
     page: 1,
     per_page: 40,
     images: [],
+    totalImages: 0,
     searchStatus: "idle",
   };
 
@@ -19,10 +21,17 @@ class App extends React.Component {
     this.setState({ searchQuery });
   };
 
+  incrementPage = () => {
+    this.setState((prevState) => ({
+      page: prevState.page + 1,
+    }));
+  };
+
   async componentDidUpdate(_, prevState) {
     const { searchQuery, page, per_page } = this.state;
     const shouldFetch =
-      prevState.searchQuery !== searchQuery && searchQuery !== "";
+      prevState.searchQuery !== searchQuery && searchQuery !== "" && page === 1;
+    const shouldFetchMore = prevState.page !== page;
 
     if (shouldFetch) {
       try {
@@ -44,7 +53,30 @@ class App extends React.Component {
             "We are sorry, but you have reached the end of search results."
           );
         }
-        this.setState({ images: [...this.state.images, ...hits] });
+
+        this.setState({
+          images: [...this.state.images, ...hits],
+          totalImages: totalHits,
+        });
+      } catch (error) {
+        this.setState({ searchStatus: "rejected" });
+        console.log(error);
+        toast.error("Error. We are sorry, but something went wrong.");
+      }
+    }
+
+    if (shouldFetchMore) {
+      try {
+        this.setState({
+          searchStatus: "pending",
+          images: [...this.state.images],
+        });
+        const result = await fetchImages(searchQuery, page, per_page);
+        this.setState({ searchStatus: "resolved" });
+        const { hits } = result;
+        this.setState({
+          images: [...this.state.images, ...hits],
+        });
         console.log(result);
       } catch (error) {
         this.setState({ searchStatus: "rejected" });
@@ -55,11 +87,14 @@ class App extends React.Component {
   }
 
   render() {
-    const { images } = this.state;
+    const { images, searchStatus, per_page, totalImages } = this.state;
+    const shouldRenderButton =
+      (totalImages > per_page) & (searchStatus !== "pending");
     return (
       <div className="photo-card">
         <Searchbar onFormSubmit={this.handleFormSubmit} />
         <ImageGallery images={images} />
+        {shouldRenderButton && <Button onClick={this.incrementPage} />}
         <ToastContainer autoClose={3000} />
       </div>
     );
