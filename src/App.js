@@ -6,6 +6,7 @@ import { fetchImages } from "API-service/API-service";
 import Searchbar from "components/Searchbar/Searchbar";
 import ImageGallery from "components/ImageGallery/ImageGallery";
 import Button from "components/Button/Button";
+import Loader from "components/Loader/Loader";
 
 class App extends React.Component {
   state = {
@@ -90,6 +91,7 @@ class App extends React.Component {
     return (
       <div className="photo-card">
         <Searchbar onFormSubmit={this.handleFormSubmit} />
+        {searchStatus === "pending" && <Loader />}
         {images.length > 0 && <ImageGallery images={images} />}
         {shouldRenderButton && <Button onClick={this.incrementPage} />}
         <ToastContainer autoClose={3000} />
