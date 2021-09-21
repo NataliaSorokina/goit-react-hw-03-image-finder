@@ -1,11 +1,15 @@
 import React from "react";
 import ImageGalleryItem from "components/ImageGalleryItem/ImageGalleryItem";
 
-function ImageGallery({ images }) {
+function ImageGallery({ images, onSelect }) {
   return (
-    <ul /* className="ImageGallery" */>
-      {images.map(({ webformatURL, tags, id }) => (
-        <ImageGalleryItem src={webformatURL} alt={tags} key={id} />
+    <ul /* className='ImageGallery' */>
+      {images.map((image) => (
+        <ImageGalleryItem
+          key={image.id}
+          image={image}
+          onSelect={() => onSelect(image)}
+        />
       ))}
     </ul>
   );

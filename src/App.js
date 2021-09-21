@@ -7,15 +7,19 @@ import Searchbar from "components/Searchbar/Searchbar";
 import ImageGallery from "components/ImageGallery/ImageGallery";
 import Button from "components/Button/Button";
 import Loader from "components/Loader/Loader";
+import Modal from "components/Modal/Modal";
+// import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 
 class App extends React.Component {
   state = {
     searchQuery: "",
     page: 1,
-    per_page: 40,
-    images: [],
+    per_page: 12,
     totalImages: 0,
+    images: [],
     searchStatus: "idle",
+    largeImage: "",
+    showModal: false,
   };
 
   handleFormSubmit = (searchQuery) => {
@@ -26,9 +30,16 @@ class App extends React.Component {
     });
   };
 
-  incrementPage = () => {
+  handlePageIncrement = () => {
     this.setState((prevState) => ({
       page: prevState.page + 1,
+    }));
+  };
+
+  handleModalToggle = (fullImage) => {
+    this.setState(({ showModal }) => ({
+      largeImage: !showModal ? fullImage : "",
+      showModal: !showModal,
     }));
   };
 
@@ -75,7 +86,6 @@ class App extends React.Component {
         this.setState({
           images: [...this.state.images, ...hits],
         });
-        // console.log(result);
       }
     } catch (error) {
       this.setState({ searchStatus: "rejected" });
@@ -85,15 +95,27 @@ class App extends React.Component {
   }
 
   render() {
-    const { images, searchStatus, per_page, totalImages } = this.state;
+    const {
+      images,
+      searchStatus,
+      per_page,
+      totalImages,
+      showModal,
+      largeImage,
+    } = this.state;
     const shouldRenderButton =
       totalImages > per_page && searchStatus !== "pending";
     return (
-      <div className="photo-card">
+      <div /* className='photo-card' */>
         <Searchbar onFormSubmit={this.handleFormSubmit} />
         {searchStatus === "pending" && <Loader />}
-        {images.length > 0 && <ImageGallery images={images} />}
-        {shouldRenderButton && <Button onClick={this.incrementPage} />}
+        {images.length > 0 && (
+          <ImageGallery images={images} onSelect={this.handleModalToggle} />
+        )}
+        {shouldRenderButton && <Button onClick={this.handlePageIncrement} />}
+        {showModal && (
+          <Modal fullImage={largeImage} onClose={this.handleModalToggle} />
+        )}
         <ToastContainer autoClose={3000} />
       </div>
     );

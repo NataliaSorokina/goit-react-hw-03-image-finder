@@ -1,12 +1,13 @@
 import React from "react";
 
-function ImageGalleryItem({ src, alt }) {
+function ImageGalleryItem({ onSelect, image }) {
+  const { webformatURL, tags } = image;
   return (
-    <li /*  className="ImageGalleryItem" */>
+    <li onClick={onSelect} /*  className='ImageGalleryItem' */>
       <img
-        src={src}
-        alt={alt}
-        /* className="ImageGalleryItem-image" */
+        src={webformatURL}
+        alt={tags}
+        /* className='ImageGalleryItem-image' */
       />
     </li>
   );
