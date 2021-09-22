@@ -1,11 +1,17 @@
 import React from "react";
+import PropTypes from "prop-types";
+import { LoadButton } from "./Button.styled";
 
 function Button({ onClick }) {
   return (
-    <button type="button" class="load-more" onClick={onClick}>
+    <LoadButton type="button" class="load-more" onClick={onClick}>
       Load more
-    </button>
+    </LoadButton>
   );
 }
 
 export default Button;
+
+Button.propTypes = {
+  onClick: PropTypes.func,
+};

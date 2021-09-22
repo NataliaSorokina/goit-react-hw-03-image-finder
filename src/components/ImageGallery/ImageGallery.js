@@ -1,9 +1,11 @@
 import React from "react";
+import PropTypes from "prop-types";
+import { List } from "./ImageGallery.styled";
 import ImageGalleryItem from "components/ImageGalleryItem/ImageGalleryItem";
 
 function ImageGallery({ images, onSelect }) {
   return (
-    <ul /* className='ImageGallery' */>
+    <List>
       {images.map((image) => (
         <ImageGalleryItem
           key={image.id}
@@ -11,8 +13,13 @@ function ImageGallery({ images, onSelect }) {
           onSelect={() => onSelect(image)}
         />
       ))}
-    </ul>
+    </List>
   );
 }
+
+ImageGallery.propTypes = {
+  images: PropTypes.object,
+  onSelect: PropTypes.func,
+};
 
 export default ImageGallery;

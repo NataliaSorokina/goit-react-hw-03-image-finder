@@ -1,10 +1,6 @@
 import { Component } from "react";
 import { Overlay, ModalWindow } from "./Modal.styled";
-// import PropTypes from 'prop-types';
-// import React, Component from 'react';
-// import * as basicLightbox from 'basiclightbox';
-
-// const modalRoot = document.querySelector('#modal-root');
+import PropTypes from "prop-types";
 
 class Modal extends Component {
   componentDidMount() {
@@ -19,16 +15,12 @@ class Modal extends Component {
 
   handleBackdropClick = (event) => {
     if (event.currentTarget === event.target) {
-      // console.log('currentTarget: ', event.currentTarget);
-      // console.log('target: ', event.target);
       this.props.onClose();
     }
   };
 
   handleKeyDown = (event) => {
     if (event.code === "Escape") {
-      // console.log('Escape');
-
       this.props.onClose();
     }
   };
@@ -38,15 +30,16 @@ class Modal extends Component {
     return (
       <Overlay onClick={this.handleBackdropClick}>
         <ModalWindow>
-          <img
-            src={fullImage.largeImageURL}
-            alt={fullImage.tags}
-            /* width='800' */ height="700"
-          />
+          <img src={fullImage.largeImageURL} alt={fullImage.tags} />
         </ModalWindow>
       </Overlay>
     );
   }
 }
+
+Overlay.propTypes = {
+  fullImage: PropTypes.object,
+  onClose: PropTypes.func,
+};
 
 export default Modal;

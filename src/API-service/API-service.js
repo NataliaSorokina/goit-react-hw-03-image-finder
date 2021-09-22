@@ -1,4 +1,5 @@
 import axios from "axios";
+import PropTypes from "prop-types";
 
 axios.defaults.baseURL = "https://pixabay.com/api/";
 axios.defaults.params = new URLSearchParams({
@@ -12,4 +13,10 @@ export const fetchImages = async (searchQuery, page, per_page) => {
     `?q=${searchQuery}&page=${page}&per_page=${per_page}`
   );
   return response.data;
+};
+
+fetchImages.propTypes = {
+  searchQuery: PropTypes.array,
+  page: PropTypes.number,
+  per_page: PropTypes.number,
 };

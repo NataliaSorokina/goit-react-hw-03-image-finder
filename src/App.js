@@ -1,14 +1,13 @@
 import React from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
-import "./App.css";
+import { AppComponent } from "./App.styled.js";
 import { fetchImages } from "API-service/API-service";
 import Searchbar from "components/Searchbar/Searchbar";
 import ImageGallery from "components/ImageGallery/ImageGallery";
 import Button from "components/Button/Button";
 import Loader from "components/Loader/Loader";
 import Modal from "components/Modal/Modal";
-// import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 
 class App extends React.Component {
   state = {
@@ -41,6 +40,13 @@ class App extends React.Component {
       largeImage: !showModal ? fullImage : "",
       showModal: !showModal,
     }));
+  };
+
+  handleScroll = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
   };
 
   async componentDidUpdate(_, prevState) {
@@ -86,6 +92,7 @@ class App extends React.Component {
         this.setState({
           images: [...this.state.images, ...hits],
         });
+        this.handleScroll();
       }
     } catch (error) {
       this.setState({ searchStatus: "rejected" });
@@ -106,7 +113,7 @@ class App extends React.Component {
     const shouldRenderButton =
       totalImages > per_page && searchStatus !== "pending";
     return (
-      <div /* className='photo-card' */>
+      <AppComponent>
         <Searchbar onFormSubmit={this.handleFormSubmit} />
         {searchStatus === "pending" && <Loader />}
         {images.length > 0 && (
@@ -117,7 +124,7 @@ class App extends React.Component {
           <Modal fullImage={largeImage} onClose={this.handleModalToggle} />
         )}
         <ToastContainer autoClose={3000} />
-      </div>
+      </AppComponent>
     );
   }
 }
