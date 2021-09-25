@@ -52,14 +52,12 @@ class App extends React.Component {
   async componentDidUpdate(_, prevState) {
     const { searchQuery, page, per_page } = this.state;
     const shouldFetch =
-      prevState.searchQuery !== searchQuery && searchQuery !== "";
-    const shouldFetchMore = prevState.page !== page;
+      prevState.searchQuery !== searchQuery || prevState.page !== page;
 
-    try {
-      if (shouldFetch) {
-        this.setState({ searchStatus: "pending", images: [] });
+    if (shouldFetch) {
+      try {
+        this.setState({ searchStatus: "pending" });
         const result = await fetchImages(searchQuery, page, per_page);
-        this.setState({ searchStatus: "resolved" });
         const { hits, totalHits } = result;
         if (hits.length === 0) {
           toast.error(
@@ -68,36 +66,26 @@ class App extends React.Component {
           return;
         }
         if (hits.length > 0 && page === 1) {
-          toast(`Hooray! We found ${totalHits} images.`);
+          toast(`${totalHits} images found.`);
         }
         if (totalHits < page * per_page) {
-          toast(
-            "We are sorry, but you have reached the end of search results."
-          );
+          toast("Sorry, but you have reached the end of search results.");
         }
-
-        this.setState({
-          images: [...this.state.images, ...hits],
-          totalImages: totalHits,
-        });
+        this.setState(
+          (prevState) => ({
+            searchStatus: "resolved",
+            images: [...prevState.images, ...hits],
+            totalImages: totalHits,
+          }),
+          () => {
+            this.handleScroll();
+          }
+        );
+      } catch (error) {
+        this.setState({ searchStatus: "rejected" });
+        toast.error("Error. We are sorry, but something went wrong.");
+        console.log(error);
       }
-      if (shouldFetchMore) {
-        this.setState({
-          searchStatus: "pending",
-          images: [...this.state.images],
-        });
-        const result = await fetchImages(searchQuery, page, per_page);
-        this.setState({ searchStatus: "resolved" });
-        const { hits } = result;
-        this.setState({
-          images: [...this.state.images, ...hits],
-        });
-        this.handleScroll();
-      }
-    } catch (error) {
-      this.setState({ searchStatus: "rejected" });
-      console.log(error);
-      toast.error("Error. We are sorry, but something went wrong.");
     }
   }
 

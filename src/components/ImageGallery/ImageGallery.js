@@ -6,9 +6,9 @@ import ImageGalleryItem from "components/ImageGalleryItem/ImageGalleryItem";
 function ImageGallery({ images, onSelect }) {
   return (
     <List>
-      {images.map((image) => (
+      {images.map((image, id) => (
         <ImageGalleryItem
-          key={image.id}
+          key={id}
           image={image}
           onSelect={() => onSelect(image)}
         />
@@ -18,7 +18,7 @@ function ImageGallery({ images, onSelect }) {
 }
 
 ImageGallery.propTypes = {
-  images: PropTypes.object,
+  images: PropTypes.arrayOf(PropTypes.object),
   onSelect: PropTypes.func,
 };
 

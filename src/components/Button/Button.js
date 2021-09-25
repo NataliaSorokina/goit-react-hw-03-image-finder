@@ -4,7 +4,7 @@ import { LoadButton } from "./Button.styled";
 
 function Button({ onClick }) {
   return (
-    <LoadButton type="button" class="load-more" onClick={onClick}>
+    <LoadButton type="button" onClick={onClick}>
       Load more
     </LoadButton>
   );
